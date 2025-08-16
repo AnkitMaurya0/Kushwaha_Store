@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kushwaha Store - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">🛍️ Kushwaha Store</div>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Search products...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        </div>
+    </nav>
+
+    <!-- Shop Detail Section -->
+    <section class="shop-detail">
+        <div class="overlay">
+            <h1>Welcome to Kushwaha Store</h1>
+            <p>Your one-stop shop for amazing products from trusted platform kushwaha store.</p>
+            <a href="/products" class="btn">Buy Products</a>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section">
+        <h2>Latest Products</h2>
+        <div class="product-grid">
+            <!-- Example static products (later replace with dynamic loop in Flask) -->
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='images/default_product.jpg') }}" alt="Product">
+                <h3>Sample Product 1</h3>
+                <p>₹ 500</p>
+                <a href="/product/1" class="btn-small">View</a>
+            </div>
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='images/default_product.jpg') }}" alt="Product">
+                <h3>Sample Product 2</h3>
+                <p>₹ 800</p>
+                <a href="/product/2" class="btn-small">View</a>
+            </div>
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='images/default_product.jpg') }}" alt="Product">
+                <h3>Sample Product 3</h3>
+                <p>₹ 1200</p>
+                <a href="/product/3" class="btn-small">View</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>📞 Contact: +91 9876543210 | ✉️ Email: support@kushwahastore.com</p>
+            <p><a href="#">Terms & Conditions</a> | <a href="#">Privacy Policy</a></p>
+            <p>© 2025 Kushwaha Store. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

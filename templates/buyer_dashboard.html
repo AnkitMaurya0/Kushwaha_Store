@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Dashboard - QuickMart</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/buyer_dashboard.css') }}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">🛍️ Kushwaha Store</div>
+        
+        <div class="search-bar">
+            <input type="text" placeholder="Search groceries, electronics, personal care & more...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+        
+        <!-- Navigation Links -->
+        <ul class="nav-links">
+            <li><a href="{{ url_for('products') }}">All Products</a></li>
+            <li><a href="{{ url_for('cart') }}"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+            <li><a href="{{ url_for('orders') }}"><i class="fas fa-receipt"></i> Orders</a></li>
+            <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Hero Banner -->
+    <div class="banner quickmart-banner">
+        <div class="banner-text">
+            <h1>Welcome, {{ name }}!</h1>
+            <p>Everything you need, delivered in minutes 🛍️📦</p>
+            <a href="{{ url_for('products') }}" class="btn btn-primary">Shop Now</a>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <section class="quick-stats">
+        <div class="stat-card">
+            <i class="fas fa-box-open"></i>
+            <div>
+                <h3>{{ products|length }}</h3>
+                <p>Total Products</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-star"></i>
+            <div>
+                <h3>Top Brands</h3>
+                <p>Quality Assured</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-shipping-fast"></i>
+            <div>
+                <h3>10 Min</h3>
+                <p>Quick Delivery</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="featured-products">
+        <h2>Top Picks for You</h2>
+        
+        {% if products %}
+            <div class="products-grid">
+                {% for product in products[:8] %}
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}">
+                            <span class="product-tag">New</span>
+                            <div class="product-overlay">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-primary">View</a>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>{{ product.name }}</h3>
+                            <p class="price">₹{{ "%.2f"|format(product.price) }}</p>
+                            <p class="vendor">by {{ product.vendor_name }}</p>
+                            <div class="product-actions">
+                                <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="btn btn-secondary">
+                                    <i class="fas fa-cart-plus"></i> Add
+                                </a>
+                                <a href="{{ url_for('buy_now', product_id=product.id) }}" class="btn btn-primary">
+                                    <i class="fas fa-bolt"></i> Buy Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- View All Products Button -->
+            <div class="view-all">
+                <a href="{{ url_for('products') }}" class="btn btn-outline">
+                    <i class="fas fa-store"></i> View All
+                </a>
+            </div>
+        {% else %}
+            <div class="no-products">
+                <i class="fas fa-shopping-basket"></i>
+                <h3>No stock available</h3>
+                <p>Check back later for new arrivals</p>
+            </div>
+        {% endif %}
+    </section>
+
+    <!-- Product Categories -->
+    <section class="categories">
+        <h2>Shop by Category</h2>
+        <div class="category-container">
+            <div class="category-card">
+                <i class="fas fa-carrot"></i>
+                <p>Groceries</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-mobile-alt"></i>
+                <p>Electronics</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-soap"></i>
+                <p>Personal Care</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-lightbulb"></i>
+                <p>Home Essentials</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-book"></i>
+                <p>Stationery</p>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-tshirt"></i>
+                <p>Apparel</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-phone"></i> +91 9113777695</p>
+                <p><i class="fas fa-envelope"></i> support@quickmart.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <p><a href="{{ url_for('products') }}">All Products</a></p>
+                <p><a href="{{ url_for('orders') }}">My Orders</a></p>
+                <p><a href="{{ url_for('cart') }}">Shopping Cart</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <p><a href="#">Terms & Conditions</a></p>
+                <p><a href="#">Privacy Policy</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Kushwaha Store. Your One-Stop Shop for Everything.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

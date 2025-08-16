@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Kushwaha Store</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">🛍️ Kushwaha Store</div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('register') }}">Register</a></li>
+            <li><a href="{{ url_for('login') }}" class="active">Login</a></li>
+        </ul>
+    </nav>
+
+    <!-- Login Form Section -->
+    <section class="form-section">
+        <div class="form-container">
+            <h2>Login</h2>
+            <form action="/login" method="POST">
+                <label>Email:</label>
+                <input type="email" name="email" placeholder="Enter your email" required>
+
+                <label>Password:</label>
+                <input type="password" name="password" placeholder="Enter your password" required>
+
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>📞 Contact: +91 9876543210 | ✉️ Email: support@kushwahastore.com</p>
+            <p><a href="#">Terms & Conditions</a> | <a href="#">Privacy Policy</a></p>
+            <p>© 2025 Kushwaha Store. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

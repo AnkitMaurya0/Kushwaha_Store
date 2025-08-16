@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard - Kushwaha Store</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor_dashboard.css') }}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">🛍️ Kushwaha Store</div>
+        <div class="nav-links">
+            <a href="{{ url_for('add_product') }}"><i class="fas fa-plus"></i> Add Product</a>
+            <a href="{{ url_for('view_orders') }}"><i class="fas fa-list"></i> View Orders</a>
+            <a href="#"><i class="fas fa-user"></i> Profile</a>
+            <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }}"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Layout -->
+    <div class="dashboard-container">
+        <!-- Sidebar with Order Statistics -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-chart-bar"></i> Order Statistics</h3>
+            </div>
+            <ul class="sidebar-menu">
+                {% set pending_count = 0 %}
+                {% set shipped_count = 0 %}
+                {% set delivered_count = 0 %}
+                {% set cancelled_count = 0 %}
+                
+                {% for stat in orders_stats %}
+                    {% if stat.status == 'pending' %}
+                        {% set pending_count = stat.count %}
+                    {% elif stat.status == 'shipped' %}
+                        {% set shipped_count = stat.count %}
+                    {% elif stat.status == 'delivered' %}
+                        {% set delivered_count = stat.count %}
+                    {% elif stat.status == 'cancelled' %}
+                        {% set cancelled_count = stat.count %}
+                    {% endif %}
+                {% endfor %}
+                
+                <li>
+                    <a href="{{ url_for('view_orders') }}" class="sidebar-link pending">
+                        <i class="fas fa-clock"></i>
+                        <span>Orders Received</span>
+                        <span class="count">{{ pending_count }}</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('view_orders') }}" class="sidebar-link shipped">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span>Shipped</span>
+                        <span class="count">{{ shipped_count }}</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('view_orders') }}" class="sidebar-link delivered">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Delivered</span>
+                        <span class="count">{{ delivered_count }}</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('view_orders') }}" class="sidebar-link cancelled">
+                        <i class="fas fa-times-circle"></i>
+                        <span>Cancelled</span>
+                        <span class="count">{{ cancelled_count }}</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+                <a href="{{ url_for('add_product') }}" class="quick-btn add-product">
+                    <i class="fas fa-plus"></i> Add New Product
+                </a>
+                <a href="{{ url_for('view_orders') }}" class="quick-btn view-orders">
+                    <i class="fas fa-eye"></i> Manage Orders
+                </a>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="content">
+            <div class="welcome-section">
+                <h1><i class="fas fa-store"></i> Welcome, Vendor!</h1>
+                <p>Manage your products and orders from this dashboard.</p>
+            </div>
+
+            <!-- Dashboard Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card products">
+                    <div class="stat-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ products|length }}</h3>
+                        <p>Total Products</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card orders">
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ (pending_count + shipped_count + delivered_count + cancelled_count) }}</h3>
+                        <p>Total Orders</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card pending">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ pending_count }}</h3>
+                        <p>Pending Orders</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card revenue">
+                    <div class="stat-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Active</h3>
+                        <p>Store Status</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Products -->
+            <div class="recent-products">
+                <div class="section-header">
+                    <h2><i class="fas fa-tags"></i> Your Products</h2>
+                    <a href="{{ url_for('add_product') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add New Product
+                    </a>
+                </div>
+                
+                {% if products %}
+                    <div class="products-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product Name</th>
+                                    <th>Price</th>
+                                    <th>Added Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products[:5] %} <!-- Show only recent 5 products -->
+                                    <tr>
+                                        <td>
+                                            <img src="{{ url_for('static', filename='images/' + product.image) }}" 
+                                                 alt="{{ product.name }}" class="product-thumb">
+                                        </td>
+                                        <td>
+                                            <div class="product-name">{{ product.name }}</div>
+                                        </td>
+                                        <td>
+                                            <span class="price">₹{{ "%.2f"|format(product.price) }}</span>
+                                        </td>
+                                        <td>{{ product.created_at[:10] }}</td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="{{ url_for('edit_product', product_id=product.id) }}" 
+                                                   class="btn btn-sm btn-edit" title="Edit Product">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{{ url_for('product_detail', product_id=product.id) }}" 
+                                                   class="btn btn-sm btn-view" title="View Product">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {% if products|length > 5 %}
+                        <div class="view-all-products">
+                            <p>Showing 5 of {{ products|length }} products</p>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="no-products">
+                        <i class="fas fa-box-open"></i>
+                        <h3>No Products Added Yet</h3>
+                        <p>Start by adding your first product to the store.</p>
+                        <a href="{{ url_for('add_product') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Your First Product
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity">
+                <h2><i class="fas fa-clock"></i> Recent Activity</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <i class="fas fa-plus-circle text-success"></i>
+                        <span>Dashboard loaded successfully</span>
+                        <small>Just now</small>
+                    </div>
+                    {% if products %}
+                        <div class="activity-item">
+                            <i class="fas fa-box text-primary"></i>
+                            <span>{{ products|length }} products in your store</span>
+                            <small>Current status</small>
+                        </div>
+                    {% endif %}
+                    {% if pending_count > 0 %}
+                        <div class="activity-item">
+                            <i class="fas fa-shopping-cart text-warning"></i>
+                            <span>{{ pending_count }} orders waiting for processing</span>
+                            <small>Action needed</small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Support</h3>
+                <p><i class="fas fa-phone"></i> +91 9876543210</p>
+                <p><i class="fas fa-envelope"></i> support@kushwahastore.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Vendor Resources</h3>
+                <p><a href="{{ url_for('add_product') }}">Add Products</a></p>
+                <p><a href="{{ url_for('view_orders') }}">Manage Orders</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <p><a href="#">Terms & Conditions</a></p>
+                <p><a href="#">Privacy Policy</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Kushwaha Store. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

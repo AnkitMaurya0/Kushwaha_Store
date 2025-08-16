@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Kushwaha Store</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/orders.css') }}">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-brand">
+                
+                <h1>🛍️ Kushwaha Store</h1>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('buyer_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('products') }}">All Products</a>
+                <a href="{{ url_for('cart') }}">Cart</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>My Orders</h2>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% if orders %}
+                <div class="orders-list">
+                    {% for order in orders %}
+                        <div class="order-item">
+                            <div class="order-image">
+                                <img src="{{ url_for('static', filename='images/' + order.image) }}" alt="{{ order.name }}">
+                            </div>
+                            <div class="order-details">
+                                <h3>{{ order.name }}</h3>
+                                <p class="order-info">Order ID: #{{ order.id }}</p>
+                                <p class="order-info">Quantity: {{ order.quantity }}</p>
+                                <p class="order-info">Total: ₹{{ "%.2f"|format(order.total_price) }}</p>
+                                <p class="order-date">Ordered on: {{ order.ordered_at[:19] }}</p>
+                            </div>
+                            <div class="order-status">
+                                <span class="status {{ order.status }}">{{ order.status|title }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-orders">
+                    <h3>No orders found!</h3>
+                    <p>You haven't placed any orders yet.</p>
+                    <a href="{{ url_for('products') }}" class="btn btn-primary">Start Shopping</a>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Kushwaha Store. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
